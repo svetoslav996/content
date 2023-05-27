@@ -1,0 +1,103 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class CalculatorApp extends JFrame implements ActionListener {
+
+    private JTextField displayField;
+    private JButton[] numberButtons;
+    private JButton[] operatorButtons;
+    private JButton equalButton;
+    private JButton clearButton;
+
+    private double num1, num2, result;
+    private String operator;
+
+    public CalculatorApp() {
+        setTitle("Calculator");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 400);
+        setLayout(new BorderLayout());
+
+        displayField = new JTextField();
+        displayField.setFont(new Font("Arial", Font.PLAIN, 24));
+        displayField.setHorizontalAlignment(JTextField.RIGHT);
+        displayField.setEditable(false);
+        add(displayField, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(4, 4));
+
+        numberButtons = new JButton[10];
+        for (int i = 0; i < 10; i++) {
+            numberButtons[i] = new JButton(String.valueOf(i));
+            numberButtons[i].addActionListener(this);
+            buttonPanel.add(numberButtons[i]);
+        }
+
+        operatorButtons = new JButton[4];
+        operatorButtons[0] = new JButton("+");
+        operatorButtons[1] = new JButton("-");
+        operatorButtons[2] = new JButton("*");
+        operatorButtons[3] = new JButton("/");
+        for (int i = 0; i < 4; i++) {
+            operatorButtons[i].addActionListener(this);
+            buttonPanel.add(operatorButtons[i]);
+        }
+
+        equalButton = new JButton("=");
+        equalButton.addActionListener(this);
+        buttonPanel.add(equalButton);
+
+        clearButton = new JButton("C");
+        clearButton.addActionListener(this);
+        buttonPanel.add(clearButton);
+
+        add(buttonPanel, BorderLayout.CENTER);
+
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new CalculatorApp();
+            }
+        });
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        JButton source = (JButton) e.getSource();
+        String buttonText = source.getText();
+
+        if (buttonText.matches("[0-9]")) {
+            displayField.setText(displayField.getText() + buttonText);
+        } else if (buttonText.equals("+") || buttonText.equals("-") || buttonText.equals("*") || buttonText.equals("/")) {
+            num1 = Double.parseDouble(displayField.getText());
+            operator = buttonText;
+            displayField.setText("");
+        } else if (buttonText.equals("=")) {
+            num2 = Double.parseDouble(displayField.getText());
+            switch (operator) {
+                case "+":
+                    result = num1 + num2;
+                    break;
+                case "-":
+                    result = num1 - num2;
+                    break;
+                case "*":
+                    result = num1 * num2;
+                    break;
+                case "/":
+                    result = num1 / num2;
+                    break;
+            }
+            displayField.setText(String.valueOf(result));
+        } else if (buttonText.equals("C")) {
+            displayField.setText("");
+            num1 = 0;
+            num2 = 0;
+        }
+    }
+}
